@@ -12,6 +12,10 @@ desktop.ini
 # ----- Claude Code local -----
 .claude/
 
+# ----- Governança local (não versionar no repo público) -----
+PENDENCIAS.md
+SESSOES.md
+
 # ----- Secrets / Env -----
 .env
 .env.*
