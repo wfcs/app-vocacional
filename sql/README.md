@@ -23,7 +23,9 @@ sql/
 ├── 005_transactional.sql    # leads, assessments, answers, results, recommendations
 └── seeds/
     ├── 100_aptitude_areas.sql       # 6 áreas RIASEC
-    ├── 110_cities.sql               # 15 capitais BR
+    ├── 110_cities.sql               # 15 capitais BR (seed inicial)
+    ├── 111_cities_extra.sql         # +13 capitais (total 27 + Campinas)
+    ├── 112_cities_top319.sql        # +319 municipios > 100k hab. (Censo 2022 / Wikipedia)
     ├── 120_professions.sql          # 5 profissões
     ├── 130_courses.sql              # 7 cursos
     ├── 140_institutions.sql         # 3 instituições (USP, PUC-Rio, ETEC-SP)
