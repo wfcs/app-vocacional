@@ -53,7 +53,7 @@ def start_assessment(
     # Carrega perguntas + opções (ordem por sequence)
     qs = (
         supabase.table("questions")
-        .select("id, sequence, statement, question_options(id, label)")
+        .select("id, sequence, statement, question_options(id, label, area_id)")
         .eq("is_active", True)
         .order("sequence")
         .execute()

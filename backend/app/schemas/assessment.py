@@ -10,6 +10,7 @@ class AssessmentStart(BaseModel):
 class QuestionOptionOut(BaseModel):
     id: int
     label: str
+    area_id: int | None = None  # exposto para testes / debug; UI ignora
 
 
 class QuestionOut(BaseModel):

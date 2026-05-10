@@ -25,6 +25,7 @@ export type Lead = {
 export type QuestionOption = {
   id: number;
   label: string;
+  area_id?: number; // exposto pelo backend; UI ignora
 };
 
 export type Question = {

@@ -35,7 +35,7 @@ def main() -> int:
             "/leads",
             json={
                 "full_name": "Smoke Tester",
-                "email": "smoke@example.com",
+                "email": "felipeatalaia.s7@gmail.com",
                 "city_id": sao_paulo["id"],
                 "consent_lgpd": True,
                 "consent_marketing": False,
@@ -52,18 +52,30 @@ def main() -> int:
         ass = r.json()
         print(f"assessment_id={ass['assessment_id']} | {len(ass['questions'])} perguntas")
 
-        # 4) Monta respostas: INVESTIGATIVE em 10/12, REALISTIC em 2/12
-        # Como o frontend não tem acesso ao area_code da opção, simulamos buscando
-        # dado o LABEL conhecido (do seed). Mais simples: pegar a 2ª opção
-        # de cada pergunta — no seed ordenamos as opções na ordem RIASEC,
-        # então índice 1 = INVESTIGATIVE.
-        step("Construindo respostas (10x INVESTIGATIVE, 2x REALISTIC)")
+        # 4) Monta respostas: bias em INVESTIGATIVE
+        # Cada question_option agora expõe `area_id`. Buscamos o id da área
+        # INVESTIGATIVE pra garantir que a opção escolhida pontue lá.
+        step("Construindo respostas (todas INVESTIGATIVE)")
+        # pega o area_id de INVESTIGATIVE a partir de qualquer pergunta
+        sample_opts = ass["questions"][0]["options"]
+        # area ids: REALISTIC, INVESTIGATIVE, ARTISTIC, SOCIAL, ENTERPRISING, CONVENTIONAL têm ids 1..6
+        # mas pra robustez, vamos descobrir pegando uma INVESTIGATIVE conhecida em Q1.
+        # A opção "Ler um livro técnico ou estudar um tema novo." é INVESTIGATIVE.
+        invest_opt = next(
+            (o for o in sample_opts if "livro técnico" in o["label"].lower()), None
+        )
+        if not invest_opt:
+            print("WARN: não achei a opção INVESTIGATIVE de referência")
+            return 1
+        invest_area_id = invest_opt["area_id"]
+        print(f"area_id INVESTIGATIVE = {invest_area_id}")
+
         answers = []
-        for i, q in enumerate(ass["questions"]):
-            opts = q["options"]
-            # ordem do seed: R, I, A, S, E, C → índices 0..5
-            chosen_idx = 0 if i < 2 else 1  # primeiras 2 = R, restantes = I
-            answers.append({"question_id": q["id"], "option_id": opts[chosen_idx]["id"]})
+        for q in ass["questions"]:
+            chosen = next(
+                (o for o in q["options"] if o["area_id"] == invest_area_id), q["options"][0]
+            )
+            answers.append({"question_id": q["id"], "option_id": chosen["id"]})
         print(f"respostas montadas: {len(answers)}")
 
         # 5) Submete respostas
@@ -94,7 +106,7 @@ def main() -> int:
         # ----------------------------------------------------------------
         print("\n=== ASSERTS ===")
         scores = result["area_scores"]
-        assert scores["INVESTIGATIVE"] > 0.5, f"INVESTIGATIVE deveria dominar: {scores}"
+        assert scores["INVESTIGATIVE"] > 0.95, f"INVESTIGATIVE deveria dominar: {scores}"
         assert result["dominant_area_code"] == "INVESTIGATIVE", "área dominante errada"
         top = result["top_professions"][0]
         assert "Engenheiro" in top["name"], f"esperado Engenheiro, veio {top['name']}"
