@@ -47,12 +47,28 @@ uvicorn app.main:app --reload --port 8000
 
 ## Rodar testes
 
+### Unit (motor de recomendação — puro, sem I/O)
 ```bash
 pytest -v
 ```
 
-Os testes cobrem o motor de recomendação (funções puras). Testes de integração
-contra o Supabase serão adicionados quando tivermos um ambiente de staging.
+### Smoke E2E (requer uvicorn rodando + Supabase populado)
+```bash
+# Em um terminal:
+uvicorn app.main:app --port 8000
+
+# Em outro:
+python tests/smoke_e2e.py
+```
+
+O smoke test:
+1. `GET /cities?q=são` → encontra São Paulo
+2. `POST /leads` (cria "Smoke Tester")
+3. `POST /assessments` (recebe 12 perguntas)
+4. `POST /answers` com bias INVESTIGATIVE
+5. `POST /finalize` → valida que o motor retorna **Engenheiro de Software** como top
+6. `GET /results/{id}` → re-busca o relatório
+7. Asserts em área dominante, top profissão e instituições da cidade.
 
 ## Endpoints
 

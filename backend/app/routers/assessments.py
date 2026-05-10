@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from supabase import Client
 
 from app.config import Settings, get_settings
@@ -79,7 +79,7 @@ def submit_answers(
     assessment_id: UUID,
     payload: AnswersBatchIn,
     supabase: Client = Depends(get_supabase),
-) -> None:
+) -> Response:
     # Valida assessment
     a = (
         supabase.table("assessments")
@@ -105,6 +105,7 @@ def submit_answers(
     supabase.table("assessment_answers").upsert(
         rows, on_conflict="assessment_id,question_id"
     ).execute()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # ---------------------------------------------------------------------------
