@@ -77,4 +77,4 @@ UNION ALL SELECT 'questions',       COUNT(*) FROM questions
 UNION ALL SELECT 'question_options',COUNT(*) FROM question_options;
 ```
 
-Esperado: 15, 6, 5, 7, 3, 22, 12, 72.
+Esperado (na ordem do SELECT): cities=15, aptitude_areas=6, professions=5, courses=7, institutions=3, profession_areas=21, profession_courses=7, institution_courses=10, questions=12, question_options=72.
