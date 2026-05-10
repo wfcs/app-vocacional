@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     # CORS (lista separada por vírgula)
     cors_origins: str = "http://localhost:5173,http://localhost:3000"
 
+    # Admin (whitelist de e-mails — separados por vírgula)
+    admin_emails: str = ""
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

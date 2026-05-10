@@ -21,6 +21,27 @@ export async function api<T = unknown>(
     },
   });
 
+  return parseResponse<T>(res);
+}
+
+export async function apiAuth<T = unknown>(
+  path: string,
+  token: string,
+  init: RequestInit = {}
+): Promise<T> {
+  const res = await fetch(`${BASE}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(init.headers ?? {}),
+    },
+  });
+  return parseResponse<T>(res);
+}
+
+async function parseResponse<T>(res: Response): Promise<T> {
+
   if (res.status === 204) {
     return undefined as T;
   }

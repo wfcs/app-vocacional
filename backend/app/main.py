@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import assessments, cities, leads, results
+from app.routers import admin, assessments, cities, leads, results
 
 settings = get_settings()
 
@@ -18,7 +18,7 @@ app.add_middleware(
     allow_origins=settings.cors_origins_list,
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
+    allow_headers=["*", "Authorization"],
 )
 
 
@@ -31,3 +31,4 @@ app.include_router(cities.router)
 app.include_router(leads.router)
 app.include_router(assessments.router)
 app.include_router(results.router)
+app.include_router(admin.router)
